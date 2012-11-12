@@ -5,8 +5,7 @@ import org.jai.BSON.BSONDecoder;
 import org.jai.BSON.BSONDocument;
 import org.jai.BSON.BSONDocumentElement;
 import org.jai.BSON.BSONEncoder;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,18 +69,18 @@ public class BSONTest extends TestCase {
         assertNotSame("Get int", documentA.get("B"), 4);
     }
 
-    public void testDocumentIsEmpty() {
+    public void testDocumentIsEmpty(){
         assertFalse("Document A is empty", documentA.isEmpty());
         assertTrue("Document E is not empty", documentE.isEmpty());
     }
 
-    public void testDocumentSize() {
+    public void testDocumentSize(){
         assertEquals("Unexpected documentA size", 2, documentA.size());
         assertEquals("Unexpected documentB size", 2, documentB.size());
         assertEquals("Unexpected documentC size", 0, documentE.size());
     }
 
-    public void testDocumentClear() {
+    public void testDocumentClear(){
         int sizeBeforeClearing = documentA.size();
         assertTrue("DocumentA does not contains element A", documentA.exist("A"));
         documentA.clear();
