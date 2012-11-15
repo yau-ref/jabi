@@ -1,10 +1,12 @@
 package org.jai.BSON;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import static org.jai.BSON.BSONElementTypes.*;
 
 public class BSONDocument implements Iterable<BSONDocumentElement> {
 
@@ -19,7 +21,8 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
             throw new IllegalArgumentException("Element already in list");
         }
 
-        byte type = classificate(value);
+        short type = classify(value);
+
         if (type < 0) {
             throw new IllegalArgumentException("Unsupported element type");
         }
@@ -28,42 +31,41 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
     }
 
 
-    private byte classificate(Object n) {
+    private short classify(Object n) {
 
         if (n == null) {
-            return BSONElementTypes.NULL;
+            return NULL;
         }
-
-        //ARRAY
-        //BINARY
-
-
         if (n instanceof Integer || n instanceof Short || n instanceof Byte) {
-            return BSONElementTypes.INT32;
+            return INT32;
         }
 
         if (n instanceof Long || n instanceof AtomicLong) {
-            return BSONElementTypes.INT64;
+            return INT64;
         }
 
         if (n instanceof Float || n instanceof Double) {
-            return BSONElementTypes.FLOATING_POINT;
+            return FLOATING_POINT;
         }
 
         if (n instanceof Boolean) {
-            return BSONElementTypes.BOOLEAN;
+            return BOOLEAN;
         }
 
         if (n instanceof String || n instanceof Character) {
-            return BSONElementTypes.STRING;
+            return STRING;
         }
 
-        if (n instanceof BSONDocument) {
-            return BSONElementTypes.DOCUMENT;
+        if (n instanceof BSONDocument /* || is array */) {
+            return DOCUMENT;
         }
 
         if (n instanceof Date) {
-            return BSONElementTypes.DATE;
+            return DATE;
+        }
+
+        if (n instanceof ByteBuffer) {
+            return BINARY_GENERIC;
         }
 
         return -1;

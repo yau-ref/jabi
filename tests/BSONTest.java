@@ -5,14 +5,12 @@ import org.jai.BSON.BSONDecoder;
 import org.jai.BSON.BSONDocument;
 import org.jai.BSON.BSONDocumentElement;
 import org.jai.BSON.BSONEncoder;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import static org.jai.BSON.BSONElementTypes.INT32;
-import static org.jai.BSON.BSONElementTypes.STRING;
 
 public class BSONTest extends TestCase {
 
@@ -22,6 +20,7 @@ public class BSONTest extends TestCase {
 
     private BSONDocument documentA;
     private BSONDocument documentB;
+    private BSONDocument documentC;
     private BSONDocument documentE;
 
     @Before
@@ -54,6 +53,15 @@ public class BSONTest extends TestCase {
         ships.add("2", ship);
 
         documentB.add("Ships", ships);
+
+
+        documentC = new BSONDocument();
+        documentC.add("Binary", "data");
+        ByteBuffer b = ByteBuffer.allocate(10);
+        for (byte i = 0; i < 10; i++) {
+            b.put(i);
+        }
+        documentC.add("Bytes", b);
     }
 
     @After
@@ -69,18 +77,18 @@ public class BSONTest extends TestCase {
         assertNotSame("Get int", documentA.get("B"), 4);
     }
 
-    public void testDocumentIsEmpty(){
+    public void testDocumentIsEmpty() {
         assertFalse("Document A is empty", documentA.isEmpty());
         assertTrue("Document E is not empty", documentE.isEmpty());
     }
 
-    public void testDocumentSize(){
+    public void testDocumentSize() {
         assertEquals("Unexpected documentA size", 2, documentA.size());
         assertEquals("Unexpected documentB size", 2, documentB.size());
         assertEquals("Unexpected documentC size", 0, documentE.size());
     }
 
-    public void testDocumentClear(){
+    public void testDocumentClear() {
         int sizeBeforeClearing = documentA.size();
         assertTrue("DocumentA does not contains element A", documentA.exist("A"));
         documentA.clear();
@@ -102,7 +110,7 @@ public class BSONTest extends TestCase {
         assertTrue("B does not exists", documentA.exist("B"));
     }
 
-    public void testDocumentIterrator() {
+    public void testDocumentIterator() {
         for (BSONDocumentElement p : documentA) {
             assertTrue((p.getName().equals("A") || p.getName().equals("B")) && !p.getName().equals("C"));
         }
@@ -120,6 +128,8 @@ public class BSONTest extends TestCase {
     public void testBSONEncoder() throws IOException {
         ByteBuffer buffer = BSONEncoder.encode(documentA);
 
+        byte STRING = 0x02/*00*/;
+        byte INT32 = 0x10/*00*/;
         assertEquals("Position is not 0", 0, buffer.position());
         assertEquals("Unexpected documentA size", 25, buffer.getInt());
         assertEquals("Unexpected element type", STRING, buffer.get());
@@ -143,6 +153,7 @@ public class BSONTest extends TestCase {
         assertNotSame("Get string", decodedDocumentA.get("A"), "LOL");
         assertNotSame("Get int", decodedDocumentA.get("B"), 4);
 
+
         buffer = BSONEncoder.encode(documentB);
         BSONDocument decodedDocumentB = BSONDecoder.decode(buffer);
         assertEquals("Unexpected document type", decodedDocumentB.get("Type"), "Ships");
@@ -152,5 +163,17 @@ public class BSONTest extends TestCase {
 
         assertEquals("Unexpected ship type", ship.get("Type"), "Cruiser");
         assertEquals("Unexpected ship health", ship.get("Health"), 542);
+
+
+        buffer = BSONEncoder.encode(documentC);
+        BSONDocument decodedDocumentC = BSONDecoder.decode(buffer);
+        assertEquals("Unexpected document type", decodedDocumentC.get("Binary"), "data");
+
+        ByteBuffer bytes = (ByteBuffer) decodedDocumentC.get("Bytes");
+        for (byte i = 0; i < 10; i++) {
+            assertEquals("Element #" + i + " has unexpected value", i, bytes.get());
+        }
+
+
     }
 }

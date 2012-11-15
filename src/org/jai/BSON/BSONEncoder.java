@@ -76,6 +76,13 @@ public class BSONEncoder {
 
     }
 
+    private static void putBinary(ByteArrayOutputStream documentOStream, short type, ByteBuffer b) {
+        putInt32(documentOStream, b.limit());
+        putElementSubType(documentOStream, type);
+        byte[] bytes = b.array();
+        documentOStream.write(bytes, 0, bytes.length);
+    }
+
     private static void putElement(ByteArrayOutputStream documentOStream, BSONDocumentElement e) {
         putElementType(documentOStream, e.getType());
         putElementName(documentOStream, e.getName());
@@ -88,14 +95,18 @@ public class BSONEncoder {
         documentOStream.write(NULLBYTE);
     }
 
-    private static void putElementType(ByteArrayOutputStream documentOStream, byte type) {
-        putByte(documentOStream, type);
+    private static void putElementType(ByteArrayOutputStream documentOStream, short type) {
+        putByte(documentOStream, (byte) (0xFFL & type >> 8));
     }
 
-    private static void putElementValue(ByteArrayOutputStream documentOStream, Object value, byte type) {
+    private static void putElementSubType(ByteArrayOutputStream documentOStream, short type) {
+        putByte(documentOStream, (byte) (0xFFL & type));
+    }
+
+    private static void putElementValue(ByteArrayOutputStream documentOStream, Object value, short type) {
         switch (type) {
             case NULL:
-                putByte(documentOStream, NULL);
+                putByte(documentOStream, (byte) (0xFFL & NULL));
                 break;
             case BOOLEAN:
                 putByte(documentOStream, (byte) ((Boolean) value ? 0x01 : 0x00));
@@ -118,7 +129,12 @@ public class BSONEncoder {
             case DOCUMENT:
             case ARRAY:
                 putDocument(documentOStream, (BSONDocument) value);
-            case BINARY:
+                break;
+            case BINARY_GENERIC:
+            case BINARY_FUNCTION:
+            case BINARY_UUID:
+            case BINARY_MD5:
+                putBinary(documentOStream, type, (ByteBuffer) value);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported element type");

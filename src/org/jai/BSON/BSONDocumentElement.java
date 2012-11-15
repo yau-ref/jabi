@@ -2,11 +2,11 @@ package org.jai.BSON;
 
 public class BSONDocumentElement {
 
-    private String name;
-    private Object value;
-    private byte type;
+    private final String name;
+    private final Object value;
+    private final short type;
 
-    public BSONDocumentElement(String name, Object value, byte type) {
+    public BSONDocumentElement(String name, Object value, short type) {
         this.name = name;
         this.value = value;
         this.type = type;
@@ -21,7 +21,7 @@ public class BSONDocumentElement {
     }
 
 
-    public byte getType() {
+    public short getType() {
         return type;
     }
 }

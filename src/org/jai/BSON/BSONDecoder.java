@@ -4,9 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
+import static org.jai.BSON.BSONElementTypes.*;
+
 public class BSONDecoder {
 
-    private static byte NULLBYTE = 0x00;
+    private static final byte NULLBYTE = 0x00;
 
     public static BSONDocument decode(ByteBuffer buffer) {
         if (buffer == null) {
@@ -20,12 +22,21 @@ public class BSONDecoder {
         int currentPosition = buffer.position();
 
 
-        byte type;
+        short type;
         Object value;
         String name;
         while (currentPosition - startPosition < size - 1) {
             type = buffer.get();
             name = readName(buffer);
+            if (type == 0x05) {
+                System.out.println("TTB: " + type);
+                int pos = buffer.position();
+                buffer.getInt();
+                type = (short) ((type << 8) + (short) buffer.get());
+                buffer.position(pos);
+            } else {
+                type <<=  8;
+            }
             value = readValue(buffer, type);
             currentPosition = buffer.position();
             document.add(name, value);
@@ -39,32 +50,37 @@ public class BSONDecoder {
     }
 
 
-    private static Object readValue(ByteBuffer buffer, byte type) {
+    private static Object readValue(ByteBuffer buffer, short type) {
         switch (type) {
-            case BSONElementTypes.NULL:
+            case NULL:
                 return null;
-            case BSONElementTypes.BOOLEAN:
+            case BOOLEAN:
                 return buffer.get();
-            case BSONElementTypes.DATE:
+            case DATE:
                 return new Date(buffer.getLong());
-            case BSONElementTypes.INT32:
+            case INT32:
                 return buffer.getInt();
-            case BSONElementTypes.INT64:
+            case INT64:
                 return buffer.getLong();
-            case BSONElementTypes.FLOATING_POINT:
+            case FLOATING_POINT:
                 return buffer.getDouble();
-            case BSONElementTypes.STRING:
+            case STRING:
                 return readString(buffer);
-            case BSONElementTypes.DOCUMENT:
-            case BSONElementTypes.ARRAY:
+            case DOCUMENT:
+            case ARRAY:
                 return decode(buffer);
-            case BSONElementTypes.BINARY:
-                break;
+            case BINARY_GENERIC:
+            case BINARY_FUNCTION:
+            case BINARY_UUID:
+            case BINARY_MD5:
+                int size = buffer.getInt();
+                buffer.get();
+                byte[] b = new byte[size];
+                buffer.get(b, 0, b.length);
+                return  ByteBuffer.wrap(b);
             default:
                 throw new IllegalArgumentException("Unsupported element type: " + type);
         }
-
-        return null;
     }
 
     private static String readName(ByteBuffer buffer) {
