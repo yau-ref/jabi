@@ -73,7 +73,6 @@ public class BSONEncoder {
 
     private static void putFloatingPoint(ByteArrayOutputStream documentOStream, double d) {
         putInt64(documentOStream, Double.doubleToRawLongBits(d));
-
     }
 
     private static void putBinary(ByteArrayOutputStream documentOStream, short type, ByteBuffer b) {

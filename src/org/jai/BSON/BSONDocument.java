@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+
 import static org.jai.BSON.BSONElementTypes.*;
 
 public class BSONDocument implements Iterable<BSONDocumentElement> {
@@ -64,7 +65,7 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
             return DATE;
         }
 
-        if (n instanceof ByteBuffer) {
+        if (n instanceof ByteBuffer) {//Any binary data
             return BINARY_GENERIC;
         }
 

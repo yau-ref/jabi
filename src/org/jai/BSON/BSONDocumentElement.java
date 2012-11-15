@@ -20,7 +20,6 @@ public class BSONDocumentElement {
         return value;
     }
 
-
     public short getType() {
         return type;
     }

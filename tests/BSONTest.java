@@ -143,7 +143,7 @@ public class BSONTest extends TestCase {
         assertEquals("Not at the end", 25, buffer.position());
     }
 
-    public void testBSON() {
+    public void testBSONDecoder() {
         ByteBuffer buffer = BSONEncoder.encode(documentA);
         BSONDocument decodedDocumentA = BSONDecoder.decode(buffer);
 

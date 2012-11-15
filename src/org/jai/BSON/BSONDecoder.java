@@ -43,7 +43,6 @@ public class BSONDecoder {
         }
 
         if (buffer.get() != NULLBYTE) {
-            //TODO: Create special exception class for situation below
             throw new IllegalStateException("End of document expected");
         }
         return document;
