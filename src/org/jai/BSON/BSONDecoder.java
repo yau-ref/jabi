@@ -29,7 +29,6 @@ public class BSONDecoder {
             type = buffer.get();
             name = readName(buffer);
             if (type == 0x05) {
-                System.out.println("TTB: " + type);
                 int pos = buffer.position();
                 buffer.getInt();
                 type = (short) ((type << 8) + (short) buffer.get());
