@@ -17,21 +17,6 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
         this.elementList = new LinkedList<>();
     }
 
-    public void add(String name, Object value) {
-        if (exist(name)) {
-            throw new IllegalArgumentException("Element already in list");
-        }
-
-        short type = classify(value);
-
-        if (type < 0) {
-            throw new IllegalArgumentException("Unsupported element type");
-        }
-
-        elementList.add(new BSONDocumentElement(name, value, type));
-    }
-
-
     private short classify(Object n) {
 
         if (n == null) {
@@ -72,6 +57,26 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
         return -1;
     }
 
+    public BSONDocument add(String name, Object value) {
+        if (name == null) {
+            throw new IllegalArgumentException("Element name couldnt be null");
+        }
+
+        if (exist(name)) {
+            throw new IllegalArgumentException("Element already in list");
+        }
+
+        short type = classify(value);
+
+        if (type < 0) {
+            throw new IllegalArgumentException("Unsupported element type");
+        }
+
+        elementList.add(new BSONDocumentElement(name, value, type));
+
+        return this;
+    }
+
     private BSONDocumentElement find(String name) {
         for (BSONDocumentElement p : elementList) {
             if (p.getName().equals(name)) {
@@ -83,6 +88,9 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
 
     public Object get(String name) {
         BSONDocumentElement p = find(name);
+        if (p == null) {
+            throw new IllegalArgumentException("Document does not contains element: " + name);
+        }
         return p.getValue();
     }
 
@@ -98,15 +106,17 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
         return size() == 0;
     }
 
-    public void clear() {
+    public BSONDocument clear() {
         elementList = new LinkedList<>();
+        return this;
     }
 
-    public void remove(String name) {
+    public BSONDocument remove(String name) {
         BSONDocumentElement p = find(name);
         if (p != null) {
             elementList.remove(p);
         }
+        return this;
     }
 
     @Override
