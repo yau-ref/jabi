@@ -173,7 +173,14 @@ public class BSONTest extends TestCase {
         for (byte i = 0; i < 10; i++) {
             assertEquals("Element #" + i + " has unexpected value", i, bytes.get());
         }
+    }
 
 
+    public void testBSONDocumentChainOperations() {
+        documentA.clear().add("ParameterA", 3.14).add("ParameterB", "I will be removed").add("ParameterC", "42").remove("ParameterB");
+
+        assertTrue("Unexpected document size", documentA.size() == 2);
+        assertEquals("Element is corrupted", 3.14, documentA.get("ParameterA"));
+        assertEquals("Element is corruoted", "42", documentA.get("ParameterC"));
     }
 }
