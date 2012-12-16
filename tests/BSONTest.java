@@ -1,12 +1,7 @@
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
-import org.jai.BSON.BSONDecoder;
-import org.jai.BSON.BSONDocument;
-import org.jai.BSON.BSONDocumentElement;
-import org.jai.BSON.BSONEncoder;
-import org.junit.After;
-import org.junit.Before;
+import org.jai.BSON.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -23,7 +18,6 @@ public class BSONTest extends TestCase {
     private BSONDocument documentC;
     private BSONDocument documentE;
 
-    @Before
     public void setUp() {
 
         documentE = new BSONDocument();
@@ -64,7 +58,6 @@ public class BSONTest extends TestCase {
         documentC.add("Bytes", b);
     }
 
-    @After
     public void tearDown() {
     }
 
@@ -182,5 +175,21 @@ public class BSONTest extends TestCase {
         assertTrue("Unexpected document size", documentA.size() == 2);
         assertEquals("Element is corrupted", 3.14, documentA.get("ParameterA"));
         assertEquals("Element is corruoted", "42", documentA.get("ParameterC"));
+    }
+
+    public void testBSONArrayAdd(){
+        BSONArray array = new BSONArray();
+
+        String hello = "Hello,";
+        String beauty = "Beauty";
+        String world = "World!";
+
+        array.add(hello);
+        array.add(beauty);
+        array.add(world);
+
+        assertEquals("Unexpected value", hello, array.get("0"));
+        assertEquals("Unexpected value", beauty, array.get("1"));
+        assertEquals("Unexpected value", world, array.get("2"));
     }
 }
