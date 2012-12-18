@@ -34,7 +34,7 @@ public class BSONDecoder {
                 type = (short) ((type << 8) + (short) buffer.get());
                 buffer.position(pos);
             } else {
-                type <<=  8;
+                type <<= 8;
             }
             value = readValue(buffer, type);
             currentPosition = buffer.position();
@@ -75,7 +75,7 @@ public class BSONDecoder {
                 buffer.get();
                 byte[] b = new byte[size];
                 buffer.get(b, 0, b.length);
-                return  ByteBuffer.wrap(b);
+                return ByteBuffer.wrap(b);
             default:
                 throw new IllegalArgumentException("Unsupported element type: " + type);
         }

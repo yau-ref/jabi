@@ -174,7 +174,7 @@ public class BSONTest extends TestCase {
 
         assertTrue("Unexpected document size", documentA.size() == 2);
         assertEquals("Element is corrupted", 3.14, documentA.get("ParameterA"));
-        assertEquals("Element is corruoted", "42", documentA.get("ParameterC"));
+        assertEquals("Element is corrupted", "42", documentA.get("ParameterC"));
     }
 
     public void testBSONArrayAdd(){

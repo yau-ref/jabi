@@ -59,7 +59,7 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
 
     public BSONDocument add(String name, Object value) {
         if (name == null) {
-            throw new IllegalArgumentException("Element name couldnt be null");
+            throw new IllegalArgumentException("Element name couldn't be null");
         }
 
         if (exist(name)) {

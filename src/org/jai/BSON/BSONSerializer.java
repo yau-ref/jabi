@@ -15,13 +15,10 @@ public class BSONSerializer {
                 BSONSerializable annotation = field.getAnnotation(BSONSerializable.class);
                 if (annotation != null) {
                     String fieldName = annotation.name().equals("") ? field.getName() : annotation.name();
-                    Object fieldValue = null;
+                    Object fieldValue;
 
                     field.setAccessible(true);
 
-                    if (field.getType().equals(null)) {
-                        return null;
-                    }
                     if (field.getType().equals(int.class)) {
                         fieldValue = field.getInt(o);
                     } else if (field.getType().equals(boolean.class)) {
