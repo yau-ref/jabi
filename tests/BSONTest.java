@@ -177,16 +177,14 @@ public class BSONTest extends TestCase {
         assertEquals("Element is corrupted", "42", documentA.get("ParameterC"));
     }
 
-    public void testBSONArrayAdd(){
+    public void testBSONArrayAdd() {
         BSONArray array = new BSONArray();
 
         String hello = "Hello,";
         String beauty = "Beauty";
         String world = "World!";
 
-        array.add(hello);
-        array.add(beauty);
-        array.add(world);
+        array.add(hello).add(beauty).add(world);
 
         assertEquals("Unexpected value", hello, array.get("0"));
         assertEquals("Unexpected value", beauty, array.get("1"));
