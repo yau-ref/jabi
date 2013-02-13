@@ -42,7 +42,11 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
             return STRING;
         }
 
-        if (n instanceof BSONDocument /* || is array */) {
+        if (n instanceof BSONArray) {
+            return ARRAY;
+        }
+
+        if (n instanceof BSONDocument) {
             return DOCUMENT;
         }
 
@@ -69,10 +73,12 @@ public class BSONDocument implements Iterable<BSONDocumentElement> {
         short type = classify(value);
 
         if (type < 0) {
-            throw new IllegalArgumentException("Unsupported element type");
+            value = BSONSerializer.serialize(value);
+            type = value instanceof BSONArray ? ARRAY : DOCUMENT;
         }
 
         elementList.add(new BSONDocumentElement(name, value, type));
+
 
         return this;
     }
