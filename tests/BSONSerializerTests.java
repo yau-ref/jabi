@@ -45,7 +45,7 @@ public class BSONSerializerTests extends TestCase {
         checkEquality(humanA, deserializedHumanA);
     }
 
-    private void checkEquality(Human a, Human b) {
+    private <T extends Human> void checkEquality(T a, T b) {
         if (a == null || b == null) {
             assertTrue("Unexpected human value", a == null && b == null);
             return;

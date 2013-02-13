@@ -177,7 +177,17 @@ public class BSONTest extends TestCase {
         assertEquals("Element is corrupted", "42", documentA.get("ParameterC"));
     }
 
-    public void testBSONArrayAdd() {
+
+    public void testBISONArrayConversion() {
+        int[] a = {1, 0, 42, 256, 9};
+        BSONDocument d = new BSONDocument();
+        d.add("a", a);
+        Object storedA = d.get("a");
+        assertTrue(storedA instanceof BSONArray);
+        assertEquals(((int) ((BSONArray) storedA).get(2)), 42);
+    }
+
+    public void testBSONArrayAddGet() {
         BSONArray array = new BSONArray();
 
         String hello = "Hello,";
@@ -186,8 +196,8 @@ public class BSONTest extends TestCase {
 
         array.add(hello).add(beauty).add(world);
 
-        assertEquals("Unexpected value", hello, array.get("0"));
-        assertEquals("Unexpected value", beauty, array.get("1"));
-        assertEquals("Unexpected value", world, array.get("2"));
+        assertEquals("Unexpected value", hello, array.get(0));
+        assertEquals("Unexpected value", beauty, array.get(1));
+        assertEquals("Unexpected value", world, array.get(2));
     }
 }

@@ -13,6 +13,10 @@ public class BSONSerializer {
             return null;
         }
 
+        if (o.getClass().isArray()) {
+            return new BSONArray(o);
+        }
+
         BSONDocument serializedObject = new BSONDocument();
         try {
             for (Field field : o.getClass().getDeclaredFields()) {
@@ -51,6 +55,7 @@ public class BSONSerializer {
                             fieldType.equals(Float.class) ||
                             fieldType.equals(Date.class) ||
                             fieldType.equals(BSONArray.class) ||
+                            fieldType.isArray() ||
                             fieldType.equals(BSONDocument.class)) {
 
                         fieldValue = field.get(o);
