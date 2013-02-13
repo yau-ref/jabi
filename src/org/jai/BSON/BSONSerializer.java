@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.List;
 
 public class BSONSerializer {
     public static BSONDocument serialize(Object o) {
@@ -13,7 +14,7 @@ public class BSONSerializer {
             return null;
         }
 
-        if (o.getClass().isArray()) {
+        if (o.getClass().isArray() || (o instanceof List)) {
             return new BSONArray(o);
         }
 

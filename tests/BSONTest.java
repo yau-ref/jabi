@@ -6,6 +6,8 @@ import org.jai.BSON.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BSONTest extends TestCase {
 
@@ -178,13 +180,28 @@ public class BSONTest extends TestCase {
     }
 
 
-    public void testBISONArrayConversion() {
-        int[] a = {1, 0, 42, 256, 9};
-        BSONDocument d = new BSONDocument();
-        d.add("a", a);
-        Object storedA = d.get("a");
+    public void testArrayConversion() {
+        int[] array = {1, 0, 42, 256, 9};
+        BSONDocument document = new BSONDocument();
+        document.add("array", array);
+        Object storedA = document.get("array");
         assertTrue(storedA instanceof BSONArray);
         assertEquals(((int) ((BSONArray) storedA).get(2)), 42);
+    }
+
+
+    public void testListConversion() {
+        List<Integer> list = new LinkedList<>();
+        list.add(1);
+        list.add(0);
+        list.add(42);
+        list.add(256);
+        list.add(9);
+        BSONDocument document = new BSONDocument();
+        document.add("list", list);
+        Object storedList = document.get("list");
+        assertTrue(storedList instanceof BSONArray);
+        assertEquals(((int) ((BSONArray) storedList).get(2)), 42);
     }
 
     public void testBSONArrayAddGet() {

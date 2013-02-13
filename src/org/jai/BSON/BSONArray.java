@@ -1,6 +1,7 @@
 package org.jai.BSON;
 
 import java.lang.reflect.Array;
+import java.util.List;
 
 public class BSONArray extends BSONDocument {
 
@@ -10,9 +11,14 @@ public class BSONArray extends BSONDocument {
     }
 
     public BSONArray(Object array) {
-        if (array.getClass().isArray()) {
-            int size = Array.getLength(array);
-            for (int i = 0; i < size; i++) {
+        if (array instanceof List) {
+            List<Object> list = (List<Object>) array;
+            for (Object o : list) {
+                add(o);
+            }
+        } else if (array.getClass().isArray()) {
+            int length = Array.getLength(array);
+            for (int i = 0; i < length; i++) {
                 add(Array.get(array, i));
             }
         } else {
