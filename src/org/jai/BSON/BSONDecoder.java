@@ -21,7 +21,6 @@ public class BSONDecoder {
         int size = buffer.getInt();
         int currentPosition = buffer.position();
 
-
         short type;
         Object value;
         String name;
@@ -51,6 +50,7 @@ public class BSONDecoder {
     private static Object readValue(ByteBuffer buffer, short type) {
         switch (type) {
             case NULL:
+                buffer.get();
                 return null;
             case BOOLEAN:
                 return buffer.get();

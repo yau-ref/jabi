@@ -114,7 +114,19 @@ public class BSONEncoder {
                 putInt64(documentOStream, ((Date) value).getTime());
                 break;
             case INT32:
-                putInt32(documentOStream, (Integer) value);
+                Integer i = null;
+
+                if (value instanceof Integer) {
+                    i = (Integer) value;
+                } else if (value instanceof Byte) {
+                    i = Integer.valueOf((Byte) value);
+                } else if (value instanceof Short) {
+                    i = Integer.valueOf((Short) value);
+                } else {
+                    throw new IllegalArgumentException("Unsupported element type: " + value.getClass().getName());
+                }
+
+                putInt32(documentOStream, i);
                 break;
             case INT64:
                 putInt64(documentOStream, (Long) value);
@@ -123,7 +135,13 @@ public class BSONEncoder {
                 putFloatingPoint(documentOStream, (Double) value);
                 break;
             case STRING:
-                putString(documentOStream, (String) value);
+                String s = null;
+                if(value instanceof Character){
+                    s = String.valueOf(value);
+                }else{
+                    s = (String) value;
+                }
+                putString(documentOStream, s);
                 break;
             case DOCUMENT:
             case ARRAY:

@@ -27,6 +27,7 @@ public class BSONTest extends TestCase {
         documentA = new BSONDocument();
         documentA.add("A", "hello");
         documentA.add("B", 42);
+        documentA.add("C", (byte) 127);
 
         documentB = new BSONDocument();
         documentB.add("Type", "Ships");
@@ -66,10 +67,12 @@ public class BSONTest extends TestCase {
     public void testDocumentGet() {
         assertEquals("Get string", documentA.get("A"), "hello");
         assertEquals("Get int", documentA.get("B"), 42);
+        assertEquals("Get byte", documentA.get("C"), (byte) 127);
 
 
         assertNotSame("Get string", documentA.get("A"), "LOL");
         assertNotSame("Get int", documentA.get("B"), 4);
+        assertNotSame("Get byte", documentA.get("C"), (byte) 1);
     }
 
     public void testDocumentIsEmpty() {
@@ -78,7 +81,7 @@ public class BSONTest extends TestCase {
     }
 
     public void testDocumentSize() {
-        assertEquals("Unexpected documentA size", 2, documentA.size());
+        assertEquals("Unexpected documentA size", 3, documentA.size());
         assertEquals("Unexpected documentB size", 2, documentB.size());
         assertEquals("Unexpected documentC size", 0, documentE.size());
     }
@@ -94,7 +97,8 @@ public class BSONTest extends TestCase {
     public void testDocumentExists() {
         assertTrue("A does not exists", documentA.exist("A"));
         assertTrue("B does not exists", documentA.exist("B"));
-        assertFalse("C does not exists", documentA.exist("C"));
+        assertTrue("C does not exists", documentA.exist("C"));
+        assertFalse("Z does not exists", documentA.exist("Z"));
     }
 
     public void testDocumentRemove() {
@@ -107,7 +111,7 @@ public class BSONTest extends TestCase {
 
     public void testDocumentIterator() {
         for (BSONDocumentElement p : documentA) {
-            assertTrue((p.getName().equals("A") || p.getName().equals("B")) && !p.getName().equals("C"));
+            assertTrue((p.getName().equals("A") || p.getName().equals("B") || p.getName().equals("C")) && !p.getName().equals("Z"));
         }
     }
 
@@ -126,7 +130,7 @@ public class BSONTest extends TestCase {
         byte STRING = 0x02/*00*/;
         byte INT32 = 0x10/*00*/;
         assertEquals("Position is not 0", 0, buffer.position());
-        assertEquals("Unexpected documentA size", 25, buffer.getInt());
+        assertEquals("Unexpected documentA size", 32, buffer.getInt());
         assertEquals("Unexpected element type", STRING, buffer.get());
         assertEquals("Unexpected name", "A", readString(buffer));
         assertEquals("Unexpected element size", 6, buffer.getInt());
@@ -134,8 +138,11 @@ public class BSONTest extends TestCase {
         assertEquals("Unexpected element type", INT32, buffer.get());
         assertEquals("Invalid name", "B", readString(buffer));
         assertEquals("Unexpected value", 42, buffer.getInt());
+        assertEquals("Unexpected element type", 16, buffer.get());
+        assertEquals("Invalid name", "C", readString(buffer));
+        assertEquals("Unexpected byte", 127, buffer.getInt());
         assertEquals("Unexpected byte", 0, buffer.get());
-        assertEquals("Not at the end", 25, buffer.position());
+        assertEquals("Not at the end", 32, buffer.position());
     }
 
     public void testBSONDecoder() {
