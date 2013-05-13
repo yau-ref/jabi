@@ -1,8 +1,8 @@
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
-import org.jai.BSON.BSONDocument;
-import org.jai.BSON.BSONSerializable;
-import org.jai.BSON.BSONSerializer;
+import org.jai.BSON.*;
+
+import java.nio.ByteBuffer;
 
 
 public class BSONSerializerTests extends TestCase {
@@ -15,7 +15,7 @@ public class BSONSerializerTests extends TestCase {
 
     public void setUp() {
         Human humanB = new Human(1, 1, false, "Sue", (byte) 50, 'A', null);
-        humanA = new Human(0, 19, true, "Mr. Smith", (byte) 180, 'A', humanB);
+        humanA = new Human(0, 19, true, "Mr. Smith", (byte) 127, 'A', humanB);
 
         serializedHumanA = BSONSerializer.serialize(humanA);
     }
@@ -40,8 +40,10 @@ public class BSONSerializerTests extends TestCase {
     }
 
     public void testDeserialize() {
-        BSONDocument serializedHumanA = BSONSerializer.serialize(humanA);
-        Human deserializedHumanA = BSONSerializer.deserialize(Human.class, serializedHumanA);
+        ByteBuffer encodedHumanA = BSONEncoder.encode(serializedHumanA);
+        BSONDocument decodedHumanA = BSONDecoder.decode(encodedHumanA);
+
+        Human deserializedHumanA = BSONSerializer.deserialize(Human.class, decodedHumanA);
         checkEquality(humanA, deserializedHumanA);
     }
 

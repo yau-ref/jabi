@@ -104,7 +104,7 @@ public class BSONSerializer {
             for (Field field : allFields) {
                 BSONSerializable a = field.getAnnotation(BSONSerializable.class);
                 if (a != null) {
-                    String fieldName = a.name().equals("") ? field.getName() : a.name();
+                    String fieldName = a.name().isEmpty() ? field.getName() : a.name();
                     Object fieldValue = serializedObject.get(fieldName);
                     Class<?> fieldType = field.getType();
 
@@ -114,11 +114,13 @@ public class BSONSerializer {
                     if (fieldType.equals(int.class)) {
                         field.setInt(instance, (int) fieldValue);
                     } else if (fieldType.equals(boolean.class)) {
-                        field.setBoolean(instance, (boolean) fieldValue);
+                        field.setBoolean(instance, ((Number) fieldValue).byteValue() != 0);
                     } else if (fieldType.equals(byte.class)) {
-                        field.setByte(instance, (byte) fieldValue);
+                        byte b = (byte) (int) fieldValue;
+                        field.setByte(instance, b);
                     } else if (fieldType.equals(char.class)) {
-                        field.setChar(instance, (char) fieldValue);
+                        char character = ((String) fieldValue).charAt(0);
+                        field.setChar(instance, character);
                     } else if (fieldType.equals(double.class)) {
                         field.setDouble(instance, (double) fieldValue);
                     } else if (fieldType.equals(short.class)) {
